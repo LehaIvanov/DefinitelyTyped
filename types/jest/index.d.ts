@@ -789,6 +789,10 @@ declare namespace jest {
          */
         addSnapshotSerializer(serializer: SnapshotSerializerPlugin): void;
         /**
+         * Adds a functions to test if two objects are equal.
+        */
+        addEqualityTesters: (equalFunctions: ((a: unknown, b: unknown) => boolean | undefined)[]) => void;
+        /**
          * Matches any object that recursively matches the provided keys.
          * This is often handy in conjunction with other asymmetric matchers.
          *

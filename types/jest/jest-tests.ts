@@ -1164,6 +1164,45 @@ expect.extend({
     },
 });
 
+class Volume {
+    public amount: number;
+    public unit: 'L' | 'mL';
+
+    constructor(amount: number, unit: 'L' | 'mL') {
+        this.amount = amount;
+        this.unit = unit;
+    }
+
+    toString(): string {
+        return `[Volume ${this.amount}${this.unit}]`;
+    }
+
+    equals(other: Volume): boolean {
+        if (this.unit === other.unit) {
+            return this.amount === other.amount;
+        } else if (this.unit === 'L' && other.unit === 'mL') {
+            return this.amount * 1000 === other.amount;
+        } else {
+            return this.amount === other.amount * 1000;
+        }
+    }
+}
+
+function areVolumesEqual(a: unknown, b: unknown): boolean | undefined {
+    const isAVolume = a instanceof Volume;
+    const isBVolume = b instanceof Volume;
+
+    if (isAVolume && isBVolume) {
+        return a.equals(b);
+    } else if (isAVolume === isBVolume) {
+        return undefined;
+    } else {
+        return false;
+    }
+}
+
+expect.addEqualityTesters([areVolumesEqual]);
+
 /* Basic matchers */
 
 describe("", () => {
@@ -1555,6 +1594,12 @@ describe("", () => {
             // @ts-expect-error
             .rejects.not.customMatcher({ prop: "good" }, "bad")
             .then(() => {});
+    });
+
+    describe("addEqualityTesters", () => {
+        it("Volumes are equal with different units", () => {
+            expect(new Volume(1, 'L')).toEqual(new Volume(1000, 'mL'));
+        });
     });
 });
 
